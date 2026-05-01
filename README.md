@@ -101,6 +101,3 @@ phishing-detector/
 - Malicious URLs are **defanged** (`hxxp://`, `[.]`) in displays
 - `settings.properties` is **gitignored** — never committed
 
-## License
-
-This project was built as a university coursework project (OOPJ, Semester 4).
