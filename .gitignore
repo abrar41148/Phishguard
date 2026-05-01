@@ -1,0 +1,25 @@
+﻿# Build outputs
+target/
+out/
+
+# Dependencies (managed by Maven)
+lib/
+
+# Runtime data
+settings.properties
+history.csv
+clipboard_debug.log
+threat_database.db
+phishguard.lock
+
+# Misc
+*.zip
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/

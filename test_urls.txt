@@ -1,0 +1,62 @@
+
+=== SAFE — Trusted Domains (should bypass heuristics) ===
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+https://www.google.com/search?q=phishing+detection
+https://github.com/microsoft/vscode
+https://www.amazon.com/dp/B08N5WRWNW
+https://www.reddit.com/r/cybersecurity
+https://en.wikipedia.org/wiki/Phishing
+https://stackoverflow.com/questions/tagged/java
+https://discord.com/channels/@me
+
+=== SAFE — Regular legitimate sites ===
+https://www.bbc.com/news
+https://www.nytimes.com
+https://www.nasa.gov
+
+=== TYPOSQUATTING — Should trigger TyposquattingAnalyzer (+40) ===
+http://paypa1.com
+http://paypol.com
+http://g00gle.com
+http://amaz0n.com
+http://faceb00k.com
+http://microsft.com
+http://appie.com
+
+=== KEYWORD — Should trigger KeywordAnalyzer (domain +25 / path +15) ===
+http://secure-login-verify.com
+http://account-update-banking.com
+http://paypal-service-verify.net
+http://example.com/login/secure/verify/account
+
+=== IP ADDRESS — Should trigger CharacterAnalyzer (+45) ===
+http://192.168.1.1/admin
+http://45.33.32.156/login
+http://103.224.182.252/secure/update
+
+=== CREDENTIAL STUFFING (@) — Should trigger CharacterAnalyzer (+50) ===
+http://paypal.com@evil-site.com
+http://google.com@phishing-domain.net/login
+
+=== LONG DOMAIN — Should trigger LengthAnalyzer (domain +15) ===
+http://this-is-an-extremely-long-suspicious-domain-name-that-no-legitimate-website-would-ever-use.com
+
+=== LONG URL — Should trigger LengthAnalyzer (URL +10) ===
+http://sketchy.com/very/deep/nested/path/that/goes/on/and/on/to/make/the/url/extremely/long/and/suspicious/looking/file.html
+
+=== MANY SUBDOMAINS — Should trigger LengthAnalyzer (+20) ===
+http://login.secure.account.verify.update.evil.com
+
+=== COMBINED ATTACKS — Should stack multiple analyzers ===
+http://192.168.0.1/login/secure/verify
+http://paypa1.com/account/login/verify
+http://secure-banking-login.g00gle.com/update/verify/account
+http://sub1.sub2.sub3.sub4.login-secure-verify.com/account/update
+
+=== URL SHORTENERS — Should trigger UnshortenAnalyzer ===
+https://bit.ly/3abc123
+https://tinyurl.com/test123
+
+=== KNOWN MALICIOUS (VirusTotal flagged) ===
+http://malware.testing.google.test/testing/malware/
+http://testsafebrowsing.appspot.com/s/phishing.html
