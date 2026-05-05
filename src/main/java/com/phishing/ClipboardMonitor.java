@@ -19,9 +19,9 @@ public class ClipboardMonitor implements Runnable {
     private String lastClipboardHash = "";
     private final DetectionEngine analyzer;
     
-    // Matches URLs including those without http:// (e.g. google.com, subdomain.test.org/path)
+    // Matches URLs including those without http:// — supports Unicode letters for IDN domains
     private static final Pattern URL_PATTERN = Pattern.compile(
-        "((?:https?://)?(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{2,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*))"
+        "((?:https?://)?(?:www\\.)?[-\\p{L}0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{2,6}\\b(?:[-\\p{L}0-9()@:%_\\+.~#?&//=]*))"
     );
 
     public ClipboardMonitor() {

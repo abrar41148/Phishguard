@@ -42,6 +42,7 @@ public class DetectionEngine {
         analyzers.add(new CharacterAnalyzer());
         analyzers.add(new KeywordAnalyzer());
         analyzers.add(new TyposquattingAnalyzer());
+        analyzers.add(new HomoglyphAnalyzer());
         analyzers.add(new WhoisAnalyzer());
         analyzers.add(new ReputationAnalyzer());
     }

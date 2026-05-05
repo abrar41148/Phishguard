@@ -67,7 +67,7 @@ public class NotificationPopup extends JWindow {
         titleLabel.setForeground(titleColor);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        JLabel closeBtn = new JLabel("\u2715");
+        JLabel closeBtn = new JLabel("X");
         closeBtn.setForeground(UITheme.TEXT_MUTED);
         closeBtn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

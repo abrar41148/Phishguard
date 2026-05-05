@@ -1,103 +1,125 @@
-# 🛡️ PhishGuard — Real-Time Phishing Link Detector
+# PhishGuard — Real-Time Phishing Link Detector
 
-A Java Swing desktop application that silently monitors your clipboard for URLs and instantly analyzes them for phishing, malware, and other threats using a multi-layered detection engine.
+**Copy a link. Get an instant verdict.** PhishGuard is a lightweight desktop app that silently watches your clipboard and alerts you the moment you copy a dangerous URL — before you ever click it.
 
-## How It Works
+---
 
-PhishGuard runs in the **system tray** and watches your clipboard. When you copy a URL, it automatically runs it through **8 detection modules** in parallel and shows a popup notification with the verdict: **Safe**, **Suspicious**, or **Malicious**.
+## What It Does
 
-## Features
+1. **You copy a link** — from an email, message, browser, anywhere.
+2. **PhishGuard scans it instantly** — running 9 checks in parallel behind the scenes.
+3. **A popup tells you the verdict** — Safe, Suspicious, or Malicious — with a risk breakdown.
 
-- **Clipboard Monitoring** — Automatic real-time URL detection from clipboard
-- **Multi-Engine Analysis** — 8 analyzers run in parallel for comprehensive detection:
-  | Analyzer | What It Does |
-  |---|---|
-  | `UnshortenAnalyzer` | Resolves shortened URLs (bit.ly, tinyurl, etc.) |
-  | `LocalDatabaseAnalyzer` | Checks against a local SQLite threat database |
-  | `LengthAnalyzer` | Flags abnormally long URLs/domains |
-  | `CharacterAnalyzer` | Detects IP-based URLs and malformed URIs |
-  | `KeywordAnalyzer` | Scans for phishing keywords (login, secure, verify, etc.) |
-  | `TyposquattingAnalyzer` | Detects lookalike domains (g00gle.com, paypa1.com) |
-  | `WhoisAnalyzer` | RDAP/WHOIS domain registration lookups |
-  | `ReputationAnalyzer` | VirusTotal, Google Safe Browsing, PhishTank API checks |
-- **Batch URL Analysis** — Paste multiple URLs at once for bulk scanning
-- **Scan History** — Full CSV-exportable history with filtering
-- **Trusted Domain Whitelist** — Skips heuristics for known-good domains (Google, YouTube, etc.)
-- **Popup Notifications** — Non-intrusive desktop alerts with risk breakdowns
-- **API Key Encryption** — Keys encrypted at rest with AES-128 (machine-specific)
-- **Single Instance Lock** — Prevents duplicate processes
-- **Dark Mode UI** — FlatLaf dark theme
+---
 
-## Prerequisites
+## Getting Started
 
-- **Java 11+** (JDK or JRE)
-- **Maven** (for building)
-- **VirusTotal API Key** (free tier) — [Get one here](https://www.virustotal.com/gui/join-us)
-- Google Safe Browsing / PhishTank keys are optional
+### Prerequisites
 
-## Setup
+| Requirement | Details |
+|---|---|
+| **Java 11+** | JDK or JRE — [Download](https://adoptium.net/) |
+| **Maven** | For building from source — [Download](https://maven.apache.org/download.cgi) |
+| **VirusTotal API Key** | Free tier is enough — [Sign up here](https://www.virustotal.com/gui/join-us) |
+
+### Quick Start
 
 ```bash
-# 1. Clone the repo
+# Clone and build
 git clone https://github.com/YOUR_USERNAME/phishing-detector.git
 cd phishing-detector
-
-# 2. Build with Maven
 mvn clean package
 
-# 3. Copy the example config and add your API key
-cp settings.properties.example settings.properties
-# Edit settings.properties and replace YOUR_API_KEY_HERE with your VirusTotal key
-
-# 4. Run
+# Run
 java -jar target/phishing-detector-1.0-SNAPSHOT.jar
 ```
 
-The app will start in the system tray. Right-click the tray icon to open the dashboard.
+On first launch, PhishGuard will ask you to enter your VirusTotal API key in the **Settings** tab. Once configured, it minimizes to the **system tray** and starts protecting you immediately.
+
+> **Windows users:** You can also double-click `Run_Phishing_Detector.bat` to launch silently.
+
+---
+
+## Using PhishGuard
+
+### System Tray
+
+PhishGuard lives in your system tray. Right-click the tray icon to open the full dashboard. It runs quietly in the background — you'll only see it when a copied URL needs your attention.
+
+### Protection Status
+
+A live status indicator at the bottom of the sidebar shows whether real-time clipboard monitoring is active:
+
+- **Green pulsing dot** — Protection is active and monitoring your clipboard.
+- **Red dot** — Protection is paused. You can toggle it from the Home tab.
+
+### Dashboard
+
+The dashboard has four tabs:
+
+| Tab | What You Can Do |
+|---|---|
+| **Home** | Manually paste and scan any URL on demand |
+| **Batch Scan** | Paste a list of URLs to scan them all at once |
+| **History** | Browse past scans, search and filter results, export to CSV |
+| **Settings** | Add or update your API keys, toggle clipboard monitoring |
+
+### Searching Your History
+
+The History tab includes a **live search bar** that filters results as you type. You can search by URL or scan result, and combine it with the source filter (Clipboard, Manual, API) to narrow down past scans.
+
+### Notifications
+
+When you copy a URL, a non-intrusive popup slides in with:
+- The **verdict** (Safe / Suspicious / Malicious)
+- A **risk score** breakdown showing which checks flagged it
+- The option to **view full details** for a deeper look
+
+---
+
+## What Gets Checked
+
+Every URL is run through **9 independent checks** simultaneously:
+
+| Check | What It Catches |
+|---|---|
+| **Link Unshortening** | Reveals the real URL hidden behind bit.ly, tinyurl, etc. |
+| **Known Threat Database** | Matches against a local database of known malicious sites |
+| **URL Length Analysis** | Flags abnormally long URLs often used in phishing |
+| **Suspicious Characters** | Detects IP-based URLs and oddly structured links |
+| **Phishing Keywords** | Catches terms like "login", "verify", "secure" in suspicious contexts |
+| **Lookalike Detection** | Spots typosquatting like `g00gle.com` or `paypa1.com` |
+| **IDN Homograph Detection** | Catches Unicode lookalike attacks — e.g., a Cyrillic "a" impersonating a Latin "a" in brand domains |
+| **Domain Age Lookup** | Checks WHOIS/RDAP data — brand-new domains are riskier |
+| **Reputation APIs** | Cross-references VirusTotal, Google Safe Browsing, and PhishTank |
+
+Results are combined into a single risk score so you get one clear answer.
+
+---
 
 ## Configuration
 
-Edit `settings.properties` (created from the example template):
+All settings are managed from the **Settings** tab inside the app. You can also edit `settings.properties` directly:
 
-| Key | Description |
-|---|---|
-| `VIRUS_TOTAL_KEY` | Your VirusTotal API key (required for full detection) |
-| `GOOGLE_SAFE_BROWSING_KEY` | Google Safe Browsing API key (optional) |
-| `PHISHTANK_KEY` | PhishTank API key (optional) |
-| `ACTIVE_PROVIDER` | Primary API provider (`VirusTotal` by default) |
-| `CLIPBOARD_SCAN_ENABLED` | Toggle clipboard monitoring (`true`/`false`) |
+| Setting | Description | Required? |
+|---|---|---|
+| `VIRUS_TOTAL_KEY` | Your VirusTotal API key | Choose an API of your preference |
+| `GOOGLE_SAFE_BROWSING_KEY` | Google Safe Browsing key | Choose an API of your preference |
+| `PHISHTANK_KEY` | PhishTank API key | Choose an API of your preference |
+| `CLIPBOARD_SCAN_ENABLED` | Turn clipboard monitoring on/off | -- |
 
-> **Note:** API keys are automatically encrypted on first save using AES-128 with a machine-specific seed. The `settings.properties` file is gitignored and never committed.
+> **Your API keys are safe.** They are encrypted at rest using AES with a machine-specific key. The `settings.properties` file is gitignored and never leaves your machine.
 
-## Project Structure
+---
 
-```
-phishing-detector/
-├── src/main/java/com/phishing/
-│   ├── Main.java                  # Entry point, system tray setup
-│   ├── DetectionEngine.java       # Orchestrates all analyzers
-│   ├── ClipboardMonitor.java      # Clipboard polling thread
-│   ├── *Analyzer.java             # 8 detection modules
-│   ├── VirusTotalClient.java      # VirusTotal API integration
-│   ├── GoogleSafeBrowsingClient.java
-│   ├── PhishTankClient.java
-│   ├── SecurityUtils.java         # Encryption, sanitization, defanging
-│   ├── DashboardWindow.java       # Main UI window
-│   ├── HomePanel.java             # Manual URL scan panel
-│   ├── BatchPanel.java            # Bulk URL analysis
-│   ├── HistoryPanel.java          # Scan history with export
-│   └── SettingsPanel.java         # API key configuration
-├── pom.xml                        # Maven build config
-├── settings.properties.example    # Config template
-├── test_urls.txt                  # Sample URLs for testing
-└── .gitignore
-```
+## Privacy & Security
 
-## Security Notes
+- **Everything runs locally.** URLs are analyzed on your machine — nothing is sent to any server except the reputation API lookups you've configured.
+- **API keys are encrypted** at rest and never committed to version control.
+- **Malicious URLs are defanged** (`hxxp://`, `[.]`) in all displays to prevent accidental clicks.
+- **CSV exports are sanitized** against formula injection attacks.
 
-- API keys are **encrypted at rest** (AES-128) in `settings.properties`
-- UI inputs are **sanitized** against Swing HTML injection
-- CSV exports are protected against **formula injection**
-- Malicious URLs are **defanged** (`hxxp://`, `[.]`) in displays
-- `settings.properties` is **gitignored** — never committed
+## Under the Hood
 
+Want to know how the 9 independent checks are built and how the risk scoring works?
+[Check out the full Implementation Details here](Implementation_Details.md).

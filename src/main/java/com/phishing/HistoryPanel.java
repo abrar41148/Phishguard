@@ -23,9 +23,21 @@ public class HistoryPanel extends JPanel {
         titleLabel.setFont(UITheme.TITLE);
         topPanel.add(titleLabel, BorderLayout.WEST);
 
-        // ── Filter & Export ──
+        // ── Filter, Search & Export ──
         JPanel controlRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         controlRow.setOpaque(false);
+
+        // Search field
+        JTextField searchField = new JTextField(16);
+        searchField.setFont(UITheme.BODY);
+        searchField.setBackground(UITheme.BG_INPUT);
+        searchField.setForeground(UITheme.TEXT_PRIMARY);
+        searchField.setCaretColor(UITheme.GREEN_BRIGHT);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UITheme.BORDER, 1, true),
+            BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        searchField.putClientProperty("JTextField.placeholderText", "Search URLs, results...");
 
         JLabel filterLabel = new JLabel("Source:");
         filterLabel.setForeground(UITheme.TEXT_MUTED);
@@ -35,6 +47,8 @@ public class HistoryPanel extends JPanel {
 
         JButton exportBtn = UITheme.ghostButton("Export CSV");
 
+        controlRow.add(searchField);
+        controlRow.add(Box.createHorizontalStrut(6));
         controlRow.add(filterLabel);
         controlRow.add(sourceFilter);
         controlRow.add(Box.createHorizontalStrut(6));
@@ -120,15 +134,41 @@ public class HistoryPanel extends JPanel {
         javax.swing.table.TableRowSorter<DefaultTableModel> sorter = new javax.swing.table.TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
-        // ── Filter Action ──
-        sourceFilter.addActionListener(e -> {
+        // ── Combined Filter Logic (search + source dropdown) ──
+        Runnable applyFilters = () -> {
+            java.util.List<javax.swing.RowFilter<DefaultTableModel, Object>> filters = new java.util.ArrayList<>();
+
+            // Source dropdown filter
             String selected = (String) sourceFilter.getSelectedItem();
-            if ("All".equals(selected)) {
-                sorter.setRowFilter(null);
-            } else {
-                sorter.setRowFilter(javax.swing.RowFilter.regexFilter(
+            if (selected != null && !"All".equals(selected)) {
+                filters.add(javax.swing.RowFilter.regexFilter(
                     "^" + java.util.regex.Pattern.quote(selected) + "$", 4));
             }
+
+            // Text search filter (searches URL column=1 and Result column=2)
+            String searchText = searchField.getText().trim();
+            if (!searchText.isEmpty()) {
+                try {
+                    String escaped = java.util.regex.Pattern.quote(searchText);
+                    filters.add(javax.swing.RowFilter.regexFilter("(?i)" + escaped, 1, 2));
+                } catch (java.util.regex.PatternSyntaxException ignored) {}
+            }
+
+            if (filters.isEmpty()) {
+                sorter.setRowFilter(null);
+            } else {
+                sorter.setRowFilter(javax.swing.RowFilter.andFilter(filters));
+            }
+        };
+
+        // ── Filter Action ──
+        sourceFilter.addActionListener(e -> applyFilters.run());
+
+        // ── Search Action (live filtering on each keystroke) ──
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { applyFilters.run(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { applyFilters.run(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { applyFilters.run(); }
         });
 
         // ── Export Action ──

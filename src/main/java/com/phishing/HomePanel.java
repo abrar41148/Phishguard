@@ -110,9 +110,9 @@ public class HomePanel extends JPanel {
         scanSub.setFont(UITheme.SMALL);
         scanSub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // URL extraction regex (same as ClipboardMonitor)
+        // URL extraction regex — supports Unicode letters for IDN homograph detection
         final java.util.regex.Pattern URL_PATTERN = java.util.regex.Pattern.compile(
-            "((?:https?://)?(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{2,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*))"
+            "((?:https?://)?(?:www\\.)?[-\\p{L}0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{2,6}\\b(?:[-\\p{L}0-9()@:%_\\+.~#?&//=]*))"
         );
 
         // Input area (supports multi-line pasting of email bodies, etc.)
@@ -270,6 +270,7 @@ public class HomePanel extends JPanel {
                                 {"Suspicious Characters", "[CharacterAnalyzer]"},
                                 {"Phishing Keywords", "[KeywordAnalyzer]"},
                                 {"Typosquatting", "[TyposquattingAnalyzer]"},
+                                {"IDN Homograph", "[HomoglyphAnalyzer]"},
                                 {"Domain Age (WHOIS)", "[WhoisAnalyzer]"},
                                 {"Reputation API", "[VirusTotal]", "[Google Safe Browsing]", "[PhishTank]"},
                             };

@@ -1,4 +1,4 @@
-﻿# Build outputs
+# Build outputs
 target/
 out/
 
@@ -11,6 +11,10 @@ history.csv
 clipboard_debug.log
 threat_database.db
 phishguard.lock
+
+# Local tools (Maven, etc.)
+tools/
+dependency-reduced-pom.xml
 
 # Misc
 *.zip

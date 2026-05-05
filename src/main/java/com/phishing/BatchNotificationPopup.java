@@ -101,7 +101,7 @@ public class BatchNotificationPopup extends JWindow {
         titleLabel.setForeground(UITheme.GREEN_BRIGHT);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-        JLabel closeBtn = new JLabel("\u2715");
+        JLabel closeBtn = new JLabel("X");
         closeBtn.setForeground(UITheme.TEXT_MUTED);
         closeBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
