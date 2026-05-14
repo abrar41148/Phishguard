@@ -35,7 +35,7 @@ public class DetectionEngine {
     private DetectionEngine() {
         this.analyzers = new ArrayList<>();
         // Registering our polymorphic modules (Order matters: Resolvers first!)
-        analyzers.add(new UnshortenAnalyzer());
+        analyzers.add(new RedirectAnalyzer());
         
         analyzers.add(new LocalDatabaseAnalyzer()); // Local threat DB (offline, instant)
         analyzers.add(new LengthAnalyzer());
@@ -66,11 +66,11 @@ public class DetectionEngine {
         UrlTarget target = new UrlTarget(rawUrl);
         RiskReport report = new RiskReport(AnalysisResult.SAFE, "Aggregated Engine");
 
-        // Execute UnshortenAnalyzer first because other analyzers depend on its resolved URL
+        // Execute RedirectAnalyzer first because other analyzers depend on its resolved URL
         long start1 = System.currentTimeMillis();
         analyzers.get(0).analyze(target, report);
         long end1 = System.currentTimeMillis();
-        System.out.println("[Benchmark] UnshortenAnalyzer took " + (end1 - start1) + "ms");
+        System.out.println("[Benchmark] RedirectAnalyzer took " + (end1 - start1) + "ms");
 
         // Check if the resolved domain is trusted
         boolean isTrusted = isTrustedDomain(target.getHost());

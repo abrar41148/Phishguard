@@ -1,8 +1,10 @@
 package com.phishing;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -75,8 +77,22 @@ public class SecurityUtils {
     }
 
     // ═══════════════════════════════════════════════════
-    // ── API Key Encryption (AES-128) ──
+    // ── API Key Encryption (AES-128-GCM) ──
     // ═══════════════════════════════════════════════════
+
+    /** GCM IV size in bytes (96 bits — NIST recommended) */
+    private static final int GCM_IV_LENGTH = 12;
+
+    /** GCM authentication tag length in bits */
+    private static final int GCM_TAG_LENGTH = 128;
+
+    /** Prefix for AES-GCM encrypted values (v2) */
+    private static final String ENC_V2_PREFIX = "ENC2:";
+
+    /** Legacy prefix for AES-ECB encrypted values (v1, read-only for migration) */
+    private static final String ENC_V1_PREFIX = "ENC:";
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
      * Generates a machine-specific AES key derived from the local username and OS.
@@ -95,36 +111,83 @@ public class SecurityUtils {
         }
     }
 
-    /** Encrypts a plaintext API key for storage */
+    /**
+     * Encrypts a plaintext API key for storage using AES-128-GCM.
+     * A random 12-byte IV is generated and prepended to the ciphertext before Base64 encoding.
+     * Output format: "ENC2:" + Base64(IV || ciphertext+tag)
+     */
     public static String encryptKey(String plaintext) {
         if (plaintext == null || plaintext.isEmpty() || plaintext.equals("YOUR_API_KEY_HERE")) {
             return plaintext;
         }
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, getEncryptionKey());
-            byte[] encrypted = cipher.doFinal(plaintext.getBytes("UTF-8"));
-            return "ENC:" + Base64.getEncoder().encodeToString(encrypted);
+            // Generate random IV for each encryption (critical for GCM security)
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            SECURE_RANDOM.nextBytes(iv);
+
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, getEncryptionKey(), spec);
+            byte[] ciphertext = cipher.doFinal(plaintext.getBytes("UTF-8"));
+
+            // Prepend IV to ciphertext: [12-byte IV][ciphertext+GCM tag]
+            byte[] combined = new byte[iv.length + ciphertext.length];
+            System.arraycopy(iv, 0, combined, 0, iv.length);
+            System.arraycopy(ciphertext, 0, combined, iv.length, ciphertext.length);
+
+            return ENC_V2_PREFIX + Base64.getEncoder().encodeToString(combined);
         } catch (Exception e) {
             System.out.println("[SecurityUtils] Encryption failed: " + e.getMessage());
             return plaintext; // Fallback to plaintext if encryption fails
         }
     }
 
-    /** Decrypts a stored API key */
+    /**
+     * Decrypts a stored API key.
+     * Supports both AES-GCM (ENC2: prefix) and legacy AES-ECB (ENC: prefix) for migration.
+     * Legacy ECB values will be re-encrypted as GCM on next save automatically.
+     */
     public static String decryptKey(String stored) {
-        if (stored == null || stored.isEmpty() || !stored.startsWith("ENC:")) {
-            return stored; // Not encrypted, return as-is (backward compat)
+        if (stored == null || stored.isEmpty()) {
+            return stored;
         }
-        try {
-            String encoded = stored.substring(4); // Remove "ENC:" prefix
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, getEncryptionKey());
-            byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encoded));
-            return new String(decrypted, "UTF-8");
-        } catch (Exception e) {
-            System.out.println("[SecurityUtils] Decryption failed: " + e.getMessage());
-            return ""; // Return empty if tampered or wrong machine
+
+        // ── AES-GCM decryption (current format) ──
+        if (stored.startsWith(ENC_V2_PREFIX)) {
+            try {
+                byte[] combined = Base64.getDecoder().decode(stored.substring(ENC_V2_PREFIX.length()));
+
+                // Extract IV (first 12 bytes) and ciphertext (remainder)
+                byte[] iv = Arrays.copyOfRange(combined, 0, GCM_IV_LENGTH);
+                byte[] ciphertext = Arrays.copyOfRange(combined, GCM_IV_LENGTH, combined.length);
+
+                Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+                cipher.init(Cipher.DECRYPT_MODE, getEncryptionKey(), spec);
+                byte[] decrypted = cipher.doFinal(ciphertext);
+                return new String(decrypted, "UTF-8");
+            } catch (Exception e) {
+                System.out.println("[SecurityUtils] GCM decryption failed: " + e.getMessage());
+                return ""; // Return empty if tampered or wrong machine
+            }
         }
+
+        // ── Legacy AES-ECB decryption (backward compat for migration) ──
+        if (stored.startsWith(ENC_V1_PREFIX)) {
+            try {
+                String encoded = stored.substring(ENC_V1_PREFIX.length());
+                Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                cipher.init(Cipher.DECRYPT_MODE, getEncryptionKey());
+                byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encoded));
+                return new String(decrypted, "UTF-8");
+            } catch (Exception e) {
+                System.out.println("[SecurityUtils] Legacy ECB decryption failed: " + e.getMessage());
+                return ""; // Return empty if tampered or wrong machine
+            }
+        }
+
+        // Not encrypted — return as-is (plaintext backward compat)
+        return stored;
     }
 }
+

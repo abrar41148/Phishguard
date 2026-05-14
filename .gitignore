@@ -20,6 +20,10 @@ dependency-reduced-pom.xml
 *.zip
 *.log
 
+# Project docs (local reference only)
+TODO.md
+Implementation_Details.md
+
 # IDE
 .idea/
 *.iml

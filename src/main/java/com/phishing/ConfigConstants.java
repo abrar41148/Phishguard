@@ -56,6 +56,15 @@ public class ConfigConstants {
     
     /** Score increase for typosquatting detection in TyposquattingAnalyzer */
     public static final int SCORE_TYPOSQUATTING = 40;
+
+    /** Score increase for 3+ redirects in RedirectAnalyzer */
+    public static final int SCORE_EXCESSIVE_REDIRECTS = 30;
+
+    /** Score increase for cross-domain redirects in RedirectAnalyzer */
+    public static final int SCORE_CROSS_DOMAIN_REDIRECT = 25;
+
+    /** Score increase for redirect to an IP address */
+    public static final int SCORE_REDIRECT_TO_IP = 50;
     
     // ═══ System Tray Settings ═══
     /** Initial delay before showing startup notification (milliseconds) */
