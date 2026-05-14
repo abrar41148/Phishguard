@@ -1,14 +1,14 @@
-# PhishGuard — Real-Time Phishing Link Detector
+# PhishGuard - Real-Time Phishing Link Detector
 
-**Copy a link. Get an instant verdict.** PhishGuard is a lightweight desktop app that silently watches your clipboard and alerts you the moment you copy a dangerous URL — before you ever click it.
+**Copy a link. Get an instant verdict.** PhishGuard is a lightweight desktop app that silently watches your clipboard and alerts you the moment you copy a dangerous URL - before you ever click it.
 
 ---
 
 ## What It Does
 
-1. **You copy a link** — from an email, message, browser, anywhere.
-2. **PhishGuard scans it instantly** — running 9 checks in parallel behind the scenes.
-3. **A popup tells you the verdict** — Safe, Suspicious, or Malicious — with a risk breakdown.
+1. **You copy a link** - from an email, message, browser, anywhere.
+2. **PhishGuard scans it instantly** - running 9 checks in parallel behind the scenes.
+3. **A popup tells you the verdict** - Safe, Suspicious, or Malicious - with a risk breakdown.
 
 ---
 
@@ -18,9 +18,9 @@
 
 | Requirement | Details |
 |---|---|
-| **Java 11+** | JDK or JRE — [Download](https://adoptium.net/) |
-| **Maven** | For building from source — [Download](https://maven.apache.org/download.cgi) |
-| **VirusTotal API Key** | Free tier is enough — [Sign up here](https://www.virustotal.com/gui/join-us) |
+| **Java 11+** | JDK or JRE - [Download](https://adoptium.net/) |
+| **Maven** | For building from source - [Download](https://maven.apache.org/download.cgi) |
+| **VirusTotal API Key** | Free tier is enough - [Sign up here](https://www.virustotal.com/gui/join-us) |
 
 ### Quick Start
 
@@ -44,14 +44,14 @@ On first launch, PhishGuard will ask you to enter your VirusTotal API key in the
 
 ### System Tray
 
-PhishGuard lives in your system tray. Right-click the tray icon to open the full dashboard. It runs quietly in the background — you'll only see it when a copied URL needs your attention.
+PhishGuard lives in your system tray. Right-click the tray icon to open the full dashboard. It runs quietly in the background - you'll only see it when a copied URL needs your attention.
 
 ### Protection Status
 
 A live status indicator at the bottom of the sidebar shows whether real-time clipboard monitoring is active:
 
-- **Green pulsing dot** — Protection is active and monitoring your clipboard.
-- **Red dot** — Protection is paused. You can toggle it from the Home tab.
+- **Green pulsing dot** - Protection is active and monitoring your clipboard.
+- **Red dot** - Protection is paused. You can toggle it from the Home tab.
 
 ### Dashboard
 
@@ -89,8 +89,8 @@ Every URL is run through **9 independent checks** simultaneously:
 | **Suspicious Characters** | Detects IP-based URLs and oddly structured links |
 | **Phishing Keywords** | Catches terms like "login", "verify", "secure" in suspicious contexts |
 | **Lookalike Detection** | Spots typosquatting like `g00gle.com` or `paypa1.com` |
-| **IDN Homograph Detection** | Catches Unicode lookalike attacks — e.g., a Cyrillic "a" impersonating a Latin "a" in brand domains |
-| **Domain Age Lookup** | Checks WHOIS/RDAP data — brand-new domains are riskier |
+| **IDN Homograph Detection** | Catches Unicode lookalike attacks - e.g., a Cyrillic "a" impersonating a Latin "a" in brand domains |
+| **Domain Age Lookup** | Checks WHOIS/RDAP data - brand-new domains are riskier |
 | **Reputation APIs** | Cross-references VirusTotal, Google Safe Browsing, and PhishTank |
 
 Results are combined into a single risk score so you get one clear answer.
@@ -114,7 +114,7 @@ All settings are managed from the **Settings** tab inside the app. You can also 
 
 ## Privacy & Security
 
-- **Everything runs locally.** URLs are analyzed on your machine — nothing is sent to any server except the reputation API lookups you've configured.
+- **Everything runs locally.** URLs are analyzed on your machine - nothing is sent to any server except the reputation API lookups you've configured.
 - **API keys are encrypted** at rest and never committed to version control.
 - **Malicious URLs are defanged** (`hxxp://`, `[.]`) in all displays to prevent accidental clicks.
 - **CSV exports are sanitized** against formula injection attacks.

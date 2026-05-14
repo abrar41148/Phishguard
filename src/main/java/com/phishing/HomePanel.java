@@ -265,7 +265,7 @@ public class HomePanel extends JPanel {
                             // Define the checks to display
                             String[][] analyzerChecks = {
                                 {"Local DB Entries", "[Local DB Entries]"},
-                                {"URL Shortener", "[UnshortenAnalyzer]"},
+                                {"Redirect Chain", "[RedirectAnalyzer]"},
                                 {"URL Length", "[LengthAnalyzer]"},
                                 {"Suspicious Characters", "[CharacterAnalyzer]"},
                                 {"Phishing Keywords", "[KeywordAnalyzer]"},
@@ -283,7 +283,7 @@ public class HomePanel extends JPanel {
                                 String flagDetail = null;
 
                                 boolean isReputation = label.equals("Reputation API");
-                                boolean isShortener = label.equals("URL Shortener");
+                                boolean isRedirect = label.equals("Redirect Chain");
 
                                 // Check if any of the prefixes for this analyzer appeared in details
                                 for (int p = 1; p < check.length; p++) {
@@ -322,23 +322,23 @@ public class HomePanel extends JPanel {
                                         statusColor = UITheme.GREEN_BRIGHT;
                                         detailText = "No vendors flagged";
                                     }
-                                } else if (isShortener) {
+                                } else if (isRedirect) {
                                     if (flagged) {
                                         int bEnd = flagDetail.indexOf("] ");
                                         detailText = bEnd > 0 ? flagDetail.substring(bEnd + 2) : flagDetail;
                                         
-                                        if (detailText.contains("Long url, shortening not required")) {
-                                            statusText = "Not shortened";
+                                        if (detailText.contains("No shortening used")) {
+                                            statusText = "Secure";
                                             statusColor = UITheme.GREEN_BRIGHT;
-                                            detailText = "No shortening used";
+                                            detailText = "No redirects";
                                         } else {
-                                            statusText = "Shortened";
+                                            statusText = "Flagged";
                                             statusColor = UITheme.AMBER;
                                         }
                                     } else {
-                                        statusText = "Not shortened";
+                                        statusText = "Secure";
                                         statusColor = UITheme.GREEN_BRIGHT;
-                                        detailText = "No shortening used";
+                                        detailText = "No redirects";
                                     }
                                 } else {
                                     if (flagged) {
